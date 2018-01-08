@@ -12,8 +12,8 @@ class Trip:
         self.timeseries.append(point)
 
     def print_series(self):
-        print('TID: ' + str(self.tripID))
-        print(self.timeseries)
+        print('\tTID: ' + str(self.tripID))
+        print('\t' + str(self.timeseries))
         print
 
 
@@ -28,5 +28,21 @@ class Vehicle:
         self.trips = [trip]
 
     def add_trip(self, trip):
-        self.timeseries.append(trip)
+        self.trips.append(trip)
+
+    def append_to_last_trip(self, point):
+        self.trips[-1].add_to_series(point)
+
+    def print_trips(self):
+        print('VID: ' + str(self.vehicleID))
+        for t in self.trips:
+            t.print_series()
+        print
+
+
+veh = Vehicle(345, 12, Trip(224, [1, 2, 3]))
+veh.print_trips()
+veh.add_trip(Trip(230, [4, 5, 6]))
+veh.append_to_last_trip([4, 7, 8])
+veh.print_trips()
 
