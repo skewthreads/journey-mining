@@ -40,29 +40,36 @@ class Vehicle:
             t.print_series()
         print
 
+    def get_last_trip(self):
+        return self.trips[-1]
+
 def main():
     d = {}
     tripID = 0
-    with open('datasets/train_set.csv', 'r') as csvfile:
-        dataReader = csv.reader(csvfile, delimiter=',')
+    with open('datasets/train_set.csv', 'r') as inputFile, open('datasets/trips.csv', 'w') as outputFile:
+        dataReader = csv.reader(inputFile)
+        dataWriter = csv.writer(outputFile)
         for row in dataReader:
             journeyPatternID = row[0]
             vehicleID = row[1]
             timestamp = row[2]
             lon = row[3]
             lat = row[4]
-            if journeyPatternID == 'null':
+            if journeyPatternID == 'null' or journeyPatternID == '':
                 continue
             if vehicleID not in d:
                 d[vehicleID] = Vehicle(vehicleID, journeyPatternID, Trip(tripID, [timestamp, lon, lat]))
+                tripID += 1
             else:
                 vehicle = d[vehicleID]
                 if journeyPatternID == vehicle.journeyPatternID:
                     vehicle.append_to_last_trip([timestamp, lon, lat])
                 else:
+                    lastTrip = vehicle.get_last_trip()
+                    dataWriter.writerow([lastTrip.tripID, vehicle.journeyPatternID, lastTrip.timeseries
                     vehicle.journeyPatternID = journeyPatternID
-                    tripID += 1
                     vehicle.add_trip(Trip(tripID, [timestamp, lon, lat]))
+                    tripID += 1
 
 
 if __name__ == '__main__':
