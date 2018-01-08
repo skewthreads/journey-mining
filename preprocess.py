@@ -1,4 +1,5 @@
-
+#!/usr/bin/python3
+import csv
 
 class Trip:
     tripID = ''
@@ -39,10 +40,30 @@ class Vehicle:
             t.print_series()
         print
 
+def main():
+    d = {}
+    tripID = 0
+    with open('datasets/train_set.csv', 'r') as csvfile:
+        dataReader = csv.reader(csvfile, delimiter=',')
+        for row in dataReader:
+            journeyPatternID = row[0]
+            vehicleID = row[1]
+            timestamp = row[2]
+            lon = row[3]
+            lat = row[4]
+            if journeyPatternID == 'null':
+                continue
+            if vehicleID not in d:
+                d[vehicleID] = Vehicle(vehicleID, journeyPatternID, Trip(tripID, [timestamp, lon, lat]))
+            else:
+                vehicle = d[vehicleID]
+                if journeyPatternID == vehicle.journeyPatternID:
+                    vehicle.append_to_last_trip([timestamp, lon, lat])
+                else:
+                    vehicle.journeyPatternID = journeyPatternID
+                    tripID += 1
+                    vehicle.add_trip(Trip(tripID, [timestamp, lon, lat]))
 
-veh = Vehicle(345, 12, Trip(224, [1, 2, 3]))
-veh.print_trips()
-veh.add_trip(Trip(230, [4, 5, 6]))
-veh.append_to_last_trip([4, 7, 8])
-veh.print_trips()
 
+if __name__ == '__main__':
+	main()
