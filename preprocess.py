@@ -1,5 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 import csv
+import gmplot
 
 class Trip:
     tripID = ''
@@ -45,10 +46,11 @@ class Vehicle:
 
 def create_trip_data():
     d = {}
+    dictID = {}
     tripID = 0
-    with open('datasets/train_set.csv', 'r') as inputFile, open('datasets/trips.csv', 'w') as outputFile:
+    with open('datasets/train_set.csv', 'r') as inputFile:
+        next(inputFile)
         dataReader = csv.reader(inputFile)
-        dataWriter = csv.writer(outputFile)
         for row in dataReader:
             journeyPatternID = row[0]
             vehicleID = row[1]
@@ -65,11 +67,28 @@ def create_trip_data():
                 if journeyPatternID == vehicle.journeyPatternID:
                     vehicle.append_to_last_trip([timestamp, lon, lat])
                 else:
-                    lastTrip = vehicle.get_last_trip()
-                    dataWriter.writerow([lastTrip.tripID, vehicle.journeyPatternID, lastTrip.timeseries])
                     vehicle.journeyPatternID = journeyPatternID
                     vehicle.add_trip(Trip(tripID, [timestamp, lon, lat]))
                     tripID += 1
+    # parse into list
+    for vehicleID, vehicle in d.iteritems():
+        for trip in vehicle.trips:
+            dictID[trip.tripID] = [vehicle.journeyPatternID, trip.timeseries]
+    with open('datasets/trips.csv', 'w') as outFile:
+        # dataWriter = csv.writer(outputFile)
+        for tid in range(len(dictID)):
+            print(tid)
+            print(dictID[tid])
+            trip = dictID[tid]
+            outFile.write(str(tid) + ', ')
+            outFile.write(str(trip[0]) + ', [')
+            timeseries = trip[1]
+            for i in range(len(timeseries) - 1):
+                point = timeseries[i]
+                outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + '], ')
+            point = timeseries[-1]
+            outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + ']')
+            outFile.write(']\n')
 
 def clean_trip_data():
     with open('datasets/trips.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'w') as outputFile:
@@ -80,10 +99,15 @@ def clean_trip_data():
             journeyPatternID = row[1]
             timeseries = row[2]
 
+def draw_map(longs, lats):
+    gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 18)
+    gmap.plot(lats, longs, 'cornflowerblue', edge_width=10)
+    gmap.draw('map.html')
 
 def main():
     create_trip_data()
-    clean_trip_data()
+    # clean_trip_data()
+    # draw_map(dsad)
 
 
 if __name__ == '__main__':
