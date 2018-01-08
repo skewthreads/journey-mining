@@ -2,6 +2,7 @@
 import csv
 import gmplot
 import ast
+from math import radians, cos, sin, asin, sqrt
 
 class Trip:
     tripID = ''
@@ -44,6 +45,22 @@ class Vehicle:
 
     def get_last_trip(self):
         return self.trips[-1]
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    # Radius of earth in kilometers is 6371
+    km = 6371* c
+    return km
 
 def create_trip_data():
     d = {}
@@ -91,11 +108,27 @@ def create_trip_data():
 def clean_trip_data():
     with open('datasets/trips.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'w') as outputFile:
         dataReader = csv.reader(inputFile, delimiter=';')
-        dataWriter = csv.writer(outputFile)
+        dataWriter = csv.writer(outputFile, delimiter=';')
         for row in dataReader:
             tripID = row[0]
             journeyPatternID = row[1]
             timeseries = ast.literal_eval(row[2])
+            totalDistance = 0
+            maxDistance = 0
+            for i in range(len(timeseries) - 1):
+                point1 = timeseries[i]
+                point2 = timeseries[i+1]
+                lon1 = point1[1]
+                lat1 = point1[2]
+                lon2 = point2[1]
+                lat2 = point2[2]
+                distance = haversine(lon1, lat1, lon2, lat2)
+                if distance > maxDistance:
+                    maxDistance = distance
+                totalDistance += distance
+            if totalDistance >= 2 and maxDistance <= 2:
+                dataWriter.writerow([tripID, journeyPatternID, timeseries])
+
 
 def draw_map(longs, lats):
     gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 18)
