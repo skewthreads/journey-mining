@@ -43,7 +43,7 @@ class Vehicle:
     def get_last_trip(self):
         return self.trips[-1]
 
-def main():
+def create_trip_data():
     d = {}
     tripID = 0
     with open('datasets/train_set.csv', 'r') as inputFile, open('datasets/trips.csv', 'w') as outputFile:
@@ -66,10 +66,24 @@ def main():
                     vehicle.append_to_last_trip([timestamp, lon, lat])
                 else:
                     lastTrip = vehicle.get_last_trip()
-                    dataWriter.writerow([lastTrip.tripID, vehicle.journeyPatternID, lastTrip.timeseries
+                    dataWriter.writerow([lastTrip.tripID, vehicle.journeyPatternID, lastTrip.timeseries])
                     vehicle.journeyPatternID = journeyPatternID
                     vehicle.add_trip(Trip(tripID, [timestamp, lon, lat]))
                     tripID += 1
+
+def clean_trip_data():
+    with open('datasets/trips.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'w') as outputFile:
+        dataReader = csv.reader(inputFile)
+        dataWriter = csv.writer(outputFile)
+        for row in dataReader:
+            tripID = row[0]
+            journeyPatternID = row[1]
+            timeseries = row[2]
+
+
+def main():
+    create_trip_data()
+    clean_trip_data()
 
 
 if __name__ == '__main__':
