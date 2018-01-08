@@ -129,17 +129,33 @@ def clean_trip_data():
             if totalDistance >= 2 and maxDistance <= 2:
                 dataWriter.writerow([tripID, journeyPatternID, timeseries])
 
-
-def draw_map(longs, lats):
-    gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 18)
-    gmap.plot(lats, longs, 'cornflowerblue', edge_width=10)
-    gmap.draw('map.html')
+def draw_trips():
+    with open('datasets/tripsClean.csv', 'r') as inputFile:
+        dataReader = csv.reader(inputFile, delimiter=';')
+        i = 0
+        journeyPatternIDdict = {}
+        for row in dataReader:
+            journeyPatternID = row[1]
+            if journeyPatternID in journeyPatternIDdict:
+                continue
+            journeyPatternIDdict[journeyPatternID] = 1
+            timeseries = ast.literal_eval(row[2])
+            longs = []
+            lats = []
+            for point in timeseries:
+                longs.append(point[1])
+                lats.append(point[2])
+            gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 18)
+            gmap.plot(lats, longs, 'cornflowerblue', edge_width=6)
+            gmap.draw('map_' + str(journeyPatternID) + '.html')
+            i += 1
+            if i >= 5:
+                break
 
 def main():
-    create_trip_data()
-    clean_trip_data()
-    # draw_map(dsad)
-
+    # create_trip_data()
+    # clean_trip_data()
+    draw_trips()
 
 if __name__ == '__main__':
 	main()
