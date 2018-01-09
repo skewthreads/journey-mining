@@ -114,13 +114,7 @@ def clean_trip_data():
             totalDistance = 0
             maxDistance = 0
             for i in range(len(timeseries) - 1):
-                point1 = timeseries[i]
-                point2 = timeseries[i+1]
-                lon1 = point1[1]
-                lat1 = point1[2]
-                lon2 = point2[1]
-                lat2 = point2[2]
-                distance = haversine(lon1, lat1, lon2, lat2)
+                distance = haversine(t1imeseries[i][1], t1imeseries[i][2], timeseries[i+1][1], timeseries[i+1][2])
                 if distance > maxDistance:
                     maxDistance = distance
                 totalDistance += distance
