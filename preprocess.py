@@ -128,34 +128,39 @@ def clean_trip_data():
                 dataWriter.writerow([tripID, journeyPatternID, timeseries])
 
 
-def draw_trips():
+def draw_trip(timeseries, name):
+    longs = []
+    lats = []
+    for point in timeseries:
+        longs.append(point[1])
+        lats.append(point[2])
+    gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 18)
+    gmap.plot(lats, longs, 'cornflowerblue', edge_width=6)
+    gmap.draw('maps/map_' + str(name) + '.html')
+
+
+def draw_n_trips(N):
     with open('datasets/tripsClean.csv', 'r') as inputFile:
         dataReader = csv.reader(inputFile, delimiter=';')
         i = 0
         journeyPatternIDdict = {}
         for row in dataReader:
             journeyPatternID = row[1]
+            # if trip exists, choose another one
             if journeyPatternID in journeyPatternIDdict:
                 continue
+            if i >= N: # if already drawn N trips, break
+                break
             journeyPatternIDdict[journeyPatternID] = 1
             timeseries = ast.literal_eval(row[2])
-            longs = []
-            lats = []
-            for point in timeseries:
-                longs.append(point[1])
-                lats.append(point[2])
-            gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 18)
-            gmap.plot(lats, longs, 'cornflowerblue', edge_width=6)
-            gmap.draw('maps/map_' + str(journeyPatternID) + '.html')
+            draw_trip(timeseries, journeyPatternID)
             i += 1
-            if i >= 5:
-                break
 
 
 def main():
     create_trip_data()
     clean_trip_data()
-    draw_trips()
+    draw_n_trips(5)
 
 
 if __name__ == '__main__':
