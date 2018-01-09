@@ -8,7 +8,7 @@ def draw_trip(timeseries, name):
     for point in timeseries:
         longs.append(point[1])
         lats.append(point[2])
-    gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 18)
+    gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 12)
     gmap.plot(lats, longs, 'cornflowerblue', edge_width=6)
     gmap.draw('maps/map_' + str(name) + '.html')
 
@@ -24,9 +24,9 @@ def draw_overlapping_trips(timeseries1, timeseries2, name):
     for point in timeseries2:
         longs2.append(point[1])
         lats2.append(point[2])
-    gmap = gmplot.GoogleMapPlotter(lats1[0], longs1[0], 18)
+    gmap = gmplot.GoogleMapPlotter(lats1[0], longs1[0], 12)
     gmap.plot(lats1, longs1, 'green', edge_width=6)
-    gmap.plot(lats2, longs2, 'red', edge_width=5)
+    gmap.plot(lats2, longs2, 'red', edge_width=3)
     gmap.draw('maps/overlap_' + str(name) + '.html')
 
 
