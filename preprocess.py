@@ -139,6 +139,23 @@ def draw_trip(timeseries, name):
     gmap.draw('maps/map_' + str(name) + '.html')
 
 
+def draw_overlapping_trips(timeseries1, timeseries2, name):
+    longs1 = []
+    lats1 = []
+    for point in timeseries1:
+        longs1.append(point[1])
+        lats1.append(point[2])
+    longs2 = []
+    lats2 = []
+    for point in timeseries2:
+        longs2.append(point[1])
+        lats2.append(point[2])
+    gmap = gmplot.GoogleMapPlotter(lats1[0], longs1[0], 18)
+    gmap.plot(lats1, longs1, 'green', edge_width=6)
+    gmap.plot(lats2, longs2, 'red', edge_width=5)
+    gmap.draw('maps/overlap_' + str(name) + '.html')
+
+
 def draw_n_trips(N):
     with open('datasets/tripsClean.csv', 'r') as inputFile:
         dataReader = csv.reader(inputFile, delimiter=';')
@@ -158,9 +175,10 @@ def draw_n_trips(N):
 
 
 def main():
-    create_trip_data()
-    clean_trip_data()
+    # create_trip_data()
+    # clean_trip_data()
     draw_n_trips(5)
+    draw_overlapping_trips(alltimes[0], alltimes[1], "overlapping")
 
 
 if __name__ == '__main__':
