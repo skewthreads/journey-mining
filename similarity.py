@@ -1,4 +1,4 @@
-from preprocess import haversine, Trip
+from preprocess import haversine, Trip, draw_trip
 import csv
 import ast
 
@@ -38,16 +38,20 @@ def find_neighbors(k):
         for testTrip in testSet:
             test_tripID = testTrip[0]
             test_timeseries = ast.literal_eval(testTrip[1])
-            distances = []
+            neighbors = []
             for cleanTrip in tripsClean:
                 clean_tripID = cleanTrip[0]
                 clean_journeyPatternID = cleanTrip[1]
                 clean_timeseries = ast.literal_eval(cleanTrip[2])
                 distance = DTWDistance(test_timeseries, clean_timeseries)
-                distances.append((distance, clean_journeyPatternID, Trip(clean_tripID, clean_timeseries)))
-            distances.sort(key=lambda tup: tup[0])
-            distances = distances[:k]
-            # print('Neighbors of', test_tripID)
-            # print(distances)
-            neighbors = [distance[2] for distance in distances]
+                neighbors.append((distance, clean_journeyPatternID, clean_timeseries))
+            neighbors.sort(key=lambda tup: tup[0])
+            neighbors = neighbors[:k]
             return neighbors
+
+
+neighbors = find_neighbors(5)
+# print Neighbors
+for n in neighbors:
+    print n[1]
+    draw_trip(n[2], n[1] + "_neighbor")
