@@ -25,7 +25,7 @@ def DTWDistance(t1, t2):
 
 
 def find_neighbors(k):
-    with open('datasets/test_set_a0.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'r') as inputClean:
+    with open('datasets/test_set_a1.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'r') as inputClean:
         testSet = csv.reader(inputFile, delimiter=';')
         tripsClean = csv.reader(inputClean, delimiter=';')
         for testTrip in testSet:
