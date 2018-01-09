@@ -1,4 +1,5 @@
-from preprocess import haversine, Trip, draw_trip
+from preprocess import haversine, draw_trip
+from tripStructs import Trip
 from draw import *
 import csv
 import ast

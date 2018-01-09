@@ -2,50 +2,8 @@
 import csv
 import ast
 from draw import *
+from tripStructs import *
 from math import radians, cos, sin, asin, sqrt
-
-class Trip:
-    tripID = ''
-    timeseries = []
-
-    def __init__(self, tid, point):
-        self.tripID = tid
-        self.timeseries = [point]
-
-    def add_to_series(self, point):
-        self.timeseries.append(point)
-
-    def print_series(self):
-        print('\tTID: ' + str(self.tripID))
-        print('\t' + str(self.timeseries))
-        print
-
-
-class Vehicle:
-    vehicleID = ''
-    journeyPatternID = ''
-    trips = []
-
-    def __init__(self, vid, jpid, trip):
-        self.vehicleID = vid
-        self.journeyPatternID = jpid
-        self.trips = [trip]
-
-    def add_trip(self, trip):
-        self.trips.append(trip)
-
-    def append_to_last_trip(self, point):
-        self.trips[-1].add_to_series(point)
-
-    def print_trips(self):
-        print('VID: ' + str(self.vehicleID))
-        for t in self.trips:
-            t.print_series()
-        print
-
-    def get_last_trip(self):
-        return self.trips[-1]
-
 
 # Calculate the great circle distance between two points on the earth (specified in decimal degrees)
 def haversine(lon1, lat1, lon2, lat2):
@@ -57,7 +15,6 @@ def haversine(lon1, lat1, lon2, lat2):
     # Radius of earth in kilometers is 6371
     km = 6371* c
     return km
-
 
 def create_trip_data():
     d = {}
@@ -101,7 +58,6 @@ def create_trip_data():
             point = timeseries[-1]
             outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + ']')
             outFile.write(']\n')
-
 
 def clean_trip_data():
     with open('datasets/trips.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'w') as outputFile:
