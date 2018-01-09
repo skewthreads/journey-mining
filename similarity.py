@@ -35,6 +35,7 @@ def find_neighbors(k):
     with open('datasets/test_set_a1.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'r') as inputClean:
         testSet = csv.reader(inputFile, delimiter=';')
         tripsClean = csv.reader(inputClean, delimiter=';')
+        testNeighbors = []
         for testTrip in testSet:
             test_tripID = testTrip[0]
             test_timeseries = ast.literal_eval(testTrip[1])
@@ -46,12 +47,13 @@ def find_neighbors(k):
                 distance = DTWDistance(test_timeseries, clean_timeseries)
                 neighbors.append((distance, clean_journeyPatternID, clean_timeseries))
             neighbors.sort(key=lambda tup: tup[0])
-            neighbors = neighbors[:k]
-            return neighbors
+            testNeighbors.append(neighbors[:k])
+        return testNeighbors
 
 
-neighbors = find_neighbors(5)
+testNeighbors = find_neighbors(5)
 # print Neighbors
-for n in neighbors:
-    print n[1]
-    draw_trip(n[2], n[1] + "_neighbor")
+for testTrip in testNeighbors:
+    for n in testTrip:
+        print n[1]
+        draw_trip(n[2], n[1] + "_neighbor")
