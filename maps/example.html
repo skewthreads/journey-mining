@@ -1,0 +1,65 @@
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>Google Maps - pygmaps </title>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false"></script>
+<script type="text/javascript">
+	function initialize() {
+		var centerlatlng = new google.maps.LatLng(53.339146, -6.274980);
+		var myOptions = {
+			zoom: 18,
+			center: centerlatlng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+var PolylineCoordinates = [
+new google.maps.LatLng(53.339146, -6.274980),
+new google.maps.LatLng(53.339005, -6.273006),
+new google.maps.LatLng(53.339424, -6.272581),
+new google.maps.LatLng(53.341179, -6.272368),
+new google.maps.LatLng(53.342602, -6.272156),
+new google.maps.LatLng(53.342602, -6.272156),
+new google.maps.LatLng(53.342861, -6.271914),
+new google.maps.LatLng(53.343708, -6.269566),
+new google.maps.LatLng(53.344200, -6.266178),
+new google.maps.LatLng(53.344200, -6.265423),
+new google.maps.LatLng(53.344200, -6.265393),
+new google.maps.LatLng(53.344200, -6.265393),
+new google.maps.LatLng(53.344200, -6.265060),
+new google.maps.LatLng(53.344212, -6.264215),
+new google.maps.LatLng(53.344410, -6.260939),
+new google.maps.LatLng(53.345451, -6.259096),
+new google.maps.LatLng(53.345917, -6.257088),
+new google.maps.LatLng(53.345905, -6.256140),
+new google.maps.LatLng(53.345905, -6.256140),
+new google.maps.LatLng(53.345905, -6.256140),
+new google.maps.LatLng(53.345501, -6.248962),
+new google.maps.LatLng(53.345352, -6.248200),
+new google.maps.LatLng(53.343777, -6.246535),
+new google.maps.LatLng(53.343327, -6.245327),
+new google.maps.LatLng(53.342979, -6.243059),
+new google.maps.LatLng(53.342819, -6.241784),
+new google.maps.LatLng(53.342758, -6.241249),
+];
+
+var Path = new google.maps.Polyline({
+clickable: false,
+geodesic: true,
+path: PolylineCoordinates,
+strokeColor: "#6495ED",
+strokeOpacity: 1.000000,
+strokeWeight: 6
+});
+
+Path.setMap(map);
+
+
+	}
+</script>
+</head>
+<body style="margin:0px; padding:0px;" onload="initialize()">
+	<div id="map_canvas" style="width: 100%; height: 100%;"></div>
+</body>
+</html>

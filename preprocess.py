@@ -46,21 +46,18 @@ class Vehicle:
     def get_last_trip(self):
         return self.trips[-1]
 
+
+# Calculate the great circle distance between two points on the earth (specified in decimal degrees)
 def haversine(lon1, lat1, lon2, lat2):
-    """
-    Calculate the great circle distance between two points
-    on the earth (specified in decimal degrees)
-    """
     # convert decimal degrees to radians
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
     # haversine formula
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    a = sin((lat2 - lat1)/2)**2 + cos(lat1) * cos(lat2) * sin((lon2 - lon1)/2)**2
     c = 2 * asin(sqrt(a))
     # Radius of earth in kilometers is 6371
     km = 6371* c
     return km
+
 
 def create_trip_data():
     d = {}
@@ -105,6 +102,7 @@ def create_trip_data():
             outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + ']')
             outFile.write(']\n')
 
+
 def clean_trip_data():
     with open('datasets/trips.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'w') as outputFile:
         dataReader = csv.reader(inputFile, delimiter=';')
@@ -129,6 +127,7 @@ def clean_trip_data():
             if totalDistance >= 2 and maxDistance <= 2:
                 dataWriter.writerow([tripID, journeyPatternID, timeseries])
 
+
 def draw_trips():
     with open('datasets/tripsClean.csv', 'r') as inputFile:
         dataReader = csv.reader(inputFile, delimiter=';')
@@ -147,15 +146,17 @@ def draw_trips():
                 lats.append(point[2])
             gmap = gmplot.GoogleMapPlotter(lats[0], longs[0], 18)
             gmap.plot(lats, longs, 'cornflowerblue', edge_width=6)
-            gmap.draw('map_' + str(journeyPatternID) + '.html')
+            gmap.draw('maps/map_' + str(journeyPatternID) + '.html')
             i += 1
             if i >= 5:
                 break
 
+
 def main():
-    # create_trip_data()
-    # clean_trip_data()
+    create_trip_data()
+    clean_trip_data()
     draw_trips()
+
 
 if __name__ == '__main__':
 	main()
