@@ -46,13 +46,15 @@ def backTrack(C, t1, t2, i, j):
 
 def find_neighbors(k):
     with open('datasets/test_set_a1.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'r') as inputClean:
+        next(inputFile)
         testSet = csv.reader(inputFile, delimiter=';')
         tripsClean = csv.reader(inputClean, delimiter=';')
-        testNeighbors = []
+        test_tripID = 0
         for testTrip in testSet:
-            test_tripID = testTrip[0]
-            test_timeseries = ast.literal_eval(testTrip[1])
+            test_tripID += 1
+            test_timeseries = ast.literal_eval(testTrip[0])
             neighbors = []
+            inputClean.seek(0) # Start from the top again
             for cleanTrip in tripsClean:
                 clean_tripID = cleanTrip[0]
                 clean_journeyPatternID = cleanTrip[1]
@@ -60,17 +62,22 @@ def find_neighbors(k):
                 distance = DTWDistance(test_timeseries, clean_timeseries)
                 neighbors.append((distance, clean_journeyPatternID, clean_timeseries))
             neighbors.sort(key=lambda tup: tup[0])
-            testNeighbors.append(neighbors[:k])
-        return testNeighbors
+            neighbors = neighbors[:k]
+            draw_trip(test_timeseries, test_tripID)
+            for n in neighbors:
+                draw_trip(n[2], str(test_tripID)+'_'+n[1]+ '_neighbor')
 
 def find_subsequences(k):
-    with open('datasets/test_set_a1.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'r') as inputClean:
+    with open('datasets/test_set_a2.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'r') as inputClean:
+        next(inputFile)
         testSet = csv.reader(inputFile, delimiter=';')
         tripsClean = csv.reader(inputClean, delimiter=';')
+        test_tripID = 0
         for testTrip in testSet:
-            test_tripID = testTrip[0]
-            test_timeseries = ast.literal_eval(testTrip[1])
+            test_tripID += 1
+            test_timeseries = ast.literal_eval(testTrip[0])
             subsequences = []
+            inputClean.seek(0) # Start from the top again
             for cleanTrip in tripsClean:
                 clean_tripID = cleanTrip[0]
                 clean_journeyPatternID = cleanTrip[1]
@@ -85,7 +92,8 @@ def find_subsequences(k):
             subsequences = subsequences[:k]
             draw_trip(test_timeseries, test_tripID)
             for s in subsequences:
-                draw_overlapping_trips(s[2], s[1], test_tripID+'_'+s[3]+ '_neighbor')
+                draw_overlapping_trips(s[2], s[1], str(test_tripID)+'_'+s[3]+ '_neighbor')
 
 
-find_subsequences(5)
+# find_neighbors(5)
+# find_subsequences(5)
