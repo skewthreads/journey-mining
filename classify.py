@@ -6,6 +6,7 @@ from preprocess import haversine
 # Find minimum borders in dataset
 def find_min_border(inputFile):
     with open(inputFile, 'r') as inFile:
+        next(inFile)
         inputReader = csv.reader(inFile, delimiter=';')
         min_lon = float('inf')
         min_lat = float('inf')
