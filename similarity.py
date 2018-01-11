@@ -46,7 +46,7 @@ def backTrack(C, t1, t2, i, j):
 
 def find_neighbors(k):
     with open('datasets/test_set_a1.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'r') as inputClean:
-        next(inputFile)
+        next(inputFile) # skip header
         testSet = csv.reader(inputFile, delimiter=';')
         tripsClean = csv.reader(inputClean, delimiter=';')
         test_tripID = 0
@@ -55,6 +55,7 @@ def find_neighbors(k):
             test_timeseries = ast.literal_eval(testTrip[0])
             neighbors = []
             inputClean.seek(0) # Start from the top again
+            next(inputClean) # skip header
             for cleanTrip in tripsClean:
                 clean_tripID = cleanTrip[0]
                 clean_journeyPatternID = cleanTrip[1]
@@ -78,6 +79,7 @@ def find_subsequences(k):
             test_timeseries = ast.literal_eval(testTrip[0])
             subsequences = []
             inputClean.seek(0) # Start from the top again
+            next(inputClean) # skip header
             for cleanTrip in tripsClean:
                 clean_tripID = cleanTrip[0]
                 clean_journeyPatternID = cleanTrip[1]
@@ -95,5 +97,5 @@ def find_subsequences(k):
                 draw_overlapping_trips(s[2], s[1], str(test_tripID)+'_'+s[3]+ '_neighbor')
 
 
-# find_neighbors(5)
-# find_subsequences(5)
+find_neighbors(5)
+find_subsequences(5)

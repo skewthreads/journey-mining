@@ -32,6 +32,7 @@ def draw_overlapping_trips(timeseries1, timeseries2, name):
 
 def draw_n_trips(N):
     with open('datasets/tripsClean.csv', 'r') as inputFile:
+        next(inputFile) # skip header
         dataReader = csv.reader(inputFile, delimiter=';')
         i = 0
         journeyPatternIDdict = {}

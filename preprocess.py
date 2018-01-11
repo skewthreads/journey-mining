@@ -47,6 +47,7 @@ def create_trip_data():
         for trip in vehicle.trips:
             dictID[trip.tripID] = [vehicle.journeyPatternID, trip.timeseries]
     with open('datasets/trips.csv', 'w') as outFile:
+        outFile.write('TripID;JourneyPatternID;Trajectory\n') # write header
         for tid in range(len(dictID)):
             trip = dictID[tid]
             outFile.write(str(tid) + ';')
@@ -61,8 +62,10 @@ def create_trip_data():
 
 def clean_trip_data():
     with open('datasets/trips.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'w') as outputFile:
+        next(inputFile)
         dataReader = csv.reader(inputFile, delimiter=';')
         dataWriter = csv.writer(outputFile, delimiter=';')
+        dataWriter.writerow(['TripID','JourneyPatternID','Trajectory']) # write header
         for row in dataReader:
             tripID = row[0]
             journeyPatternID = row[1]
@@ -70,7 +73,7 @@ def clean_trip_data():
             totalDistance = 0
             maxDistance = 0
             for i in range(len(timeseries) - 1):
-                distance = haversine(t1imeseries[i][1], t1imeseries[i][2], timeseries[i+1][1], timeseries[i+1][2])
+                distance = haversine(timeseries[i][1], timeseries[i][2], timeseries[i+1][1], timeseries[i+1][2])
                 if distance > maxDistance:
                     maxDistance = distance
                 totalDistance += distance
