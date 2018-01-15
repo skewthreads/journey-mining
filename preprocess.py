@@ -51,17 +51,8 @@ def create_trip_data():
         dataWriter.writerow(['TripID', 'JourneyPatternID', 'Trajectory'])
         for tid in range(len(dictID)):
             trip = dictID[tid]
-            # lst = [tid, trip[0]]
             timeseries = trip[1]
             dataWriter.writerow([tid, trip[0],timeseries])
-            # outFile.write(str(tid) + ';')
-            # outFile.write(str(trip[0]) + ';[')
-            # for i in range(len(timeseries) - 1):
-            #     point = timeseries[i]
-            #     outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + '], ')
-            # point = timeseries[-1]
-            # outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + ']')
-            # outFile.write(']\n')
 
 def clean_trip_data():
     with open('datasets/trips.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'w') as outputFile:
