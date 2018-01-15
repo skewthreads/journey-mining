@@ -47,18 +47,21 @@ def create_trip_data():
         for trip in vehicle.trips:
             dictID[trip.tripID] = [vehicle.journeyPatternID, trip.timeseries]
     with open('datasets/trips.csv', 'w') as outFile:
-        outFile.write('TripID;JourneyPatternID;Trajectory\n') # write header
+        dataWriter = csv.writer(outFile, delimiter=';')
+        dataWriter.writerow(['TripID', 'JourneyPatternID', 'Trajectory'])
         for tid in range(len(dictID)):
             trip = dictID[tid]
-            outFile.write(str(tid) + ';')
-            outFile.write(str(trip[0]) + ';[')
+            # lst = [tid, trip[0]]
             timeseries = trip[1]
-            for i in range(len(timeseries) - 1):
-                point = timeseries[i]
-                outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + '], ')
-            point = timeseries[-1]
-            outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + ']')
-            outFile.write(']\n')
+            dataWriter.writerow([tid, trip[0],timeseries])
+            # outFile.write(str(tid) + ';')
+            # outFile.write(str(trip[0]) + ';[')
+            # for i in range(len(timeseries) - 1):
+            #     point = timeseries[i]
+            #     outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + '], ')
+            # point = timeseries[-1]
+            # outFile.write('[' + str(point[0]) + ', ' + str(point[1]) + ', ' + str(point[2]) + ']')
+            # outFile.write(']\n')
 
 def clean_trip_data():
     with open('datasets/trips.csv', 'r') as inputFile, open('datasets/tripsClean.csv', 'w') as outputFile:
@@ -73,7 +76,7 @@ def clean_trip_data():
             totalDistance = 0
             maxDistance = 0
             for i in range(len(timeseries) - 1):
-                distance = haversine(timeseries[i][1], timeseries[i][2], timeseries[i+1][1], timeseries[i+1][2])
+                distance = haversine(float(timeseries[i][1]), float(timeseries[i][2]), float(timeseries[i+1][1]), float(timeseries[i+1][2]))
                 if distance > maxDistance:
                     maxDistance = distance
                 totalDistance += distance
@@ -82,8 +85,8 @@ def clean_trip_data():
 
 
 def main():
-    # create_trip_data()
-    # clean_trip_data()
+    create_trip_data()
+    clean_trip_data()
     draw_n_trips(5)
 
 
