@@ -76,15 +76,49 @@ def classify(classifier):
     all_tpr = []
     fold = 0
     for train_index, test_index in kf.split(X_train):
-    	X_train2, X_test = X_train[train_index], X_train[test_index]
-    	Y_train2, Y_test = Y_train[train_index], Y_train[test_index]
-    	pipeline.fit(X_train2,Y_train2)
-    	predicted=pipeline.predict(X_test)
-    	acc = accuracy_score(Y_test,predicted)
-    	mean_accuracy += acc
-    	fold += 1
+        X_train2, X_test = X_train[train_index], X_train[test_index]
+        Y_train2, Y_test = Y_train[train_index], Y_train[test_index]
+        pipeline.fit(X_train2,Y_train2)
+        predicted=pipeline.predict(X_test)
+        acc = accuracy_score(Y_test,predicted)
+        mean_accuracy += acc
+        fold += 1
     mean_accuracy = mean_accuracy / fold
     print "Mean accuracy: ",mean_accuracy
+
+def regridify(filename):
+    with open(filename, 'r') as inFile, open(filename[:-4]+'_v2.csv', 'w') as outFile:
+        first = next(inFile)
+        inputReader = csv.reader(inFile, delimiter='!')
+        outputWriter = csv.writer(outFile, delimiter='!')
+        outputWriter.writerow(first.rstrip().split('!'))
+        for row in inputReader:
+            tripID = row[0]
+            journeyPatternID = row[1]
+            trajectory = row[2]
+            cells = trajectory.split(';')
+            row = [tripID, journeyPatternID]
+            newCells = ''
+            for i in range(len(cells)-1):
+                c1 = cells[i]
+                c2 = cells[i+1]
+                x1 = c1.split(',')[0][1:]
+                y1 = c1.split(',')[1]
+                x2 = c2.split(',')[0][1:]
+                y2 = c2.split(',')[1]
+                newCell = c1;
+                if y2 > y1:
+                    newCell += 'N'
+                elif y2 < y1:
+                    newCell += 'S'
+                if x2 > x1:
+                    newCell += 'E'
+                elif x2 < x1:
+                    newCell += 'W'
+                newCells += newCell+';'
+            newCells+=cells[-1]
+            outputWriter.writerow(row+[newCells])
+
 
 
 # min_lon, min_lat = (-6.61505, 53.07045)
