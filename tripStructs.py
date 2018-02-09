@@ -2,28 +2,29 @@
 class Trip:
     tripID = ''
     timeseries = []
+    journeyPatternID = ''
 
-    def __init__(self, tid, point):
+    def __init__(self, tid, point, journeyPatternID):
         self.tripID = tid
         self.timeseries = [point]
+        self.journeyPatternID = journeyPatternID
 
     def add_to_series(self, point):
         self.timeseries.append(point)
 
     def print_series(self):
         print('\tTID: ' + str(self.tripID))
+        print('\tJPID: ' + str(self.journeyPatternID))
         print('\t' + str(self.timeseries))
         print
 
 
 class Vehicle:
     vehicleID = ''
-    journeyPatternID = ''
     trips = []
 
-    def __init__(self, vid, jpid, trip):
+    def __init__(self, vid, trip):
         self.vehicleID = vid
-        self.journeyPatternID = jpid
         self.trips = [trip]
 
     def add_trip(self, trip):
@@ -40,3 +41,6 @@ class Vehicle:
 
     def get_last_trip(self):
         return self.trips[-1]
+
+    def getLastJourneyPatternID(self):
+        return self.trips[-1].journeyPatternID

@@ -31,21 +31,21 @@ def create_trip_data():
             if journeyPatternID == 'null' or journeyPatternID == '':
                 continue
             if vehicleID not in d:
-                d[vehicleID] = Vehicle(vehicleID, journeyPatternID, Trip(tripID, [timestamp, lon, lat]))
+                d[vehicleID] = Vehicle(vehicleID, Trip(tripID, [timestamp, lon, lat], journeyPatternID))
                 tripID += 1
             else:
                 vehicle = d[vehicleID]
-                if journeyPatternID == vehicle.journeyPatternID:
+                if journeyPatternID == vehicle.getLastJourneyPatternID():
                     vehicle.append_to_last_trip([timestamp, lon, lat])
                 else:
-                    vehicle.journeyPatternID = journeyPatternID
-                    vehicle.add_trip(Trip(tripID, [timestamp, lon, lat]))
+                    # vehicle.journeyPatternID = journeyPatternID
+                    vehicle.add_trip(Trip(tripID, [timestamp, lon, lat], journeyPatternID))
                     tripID += 1
     # parse into list
     dictID = {}
     for vehicleID, vehicle in d.iteritems():
         for trip in vehicle.trips:
-            dictID[trip.tripID] = [vehicle.journeyPatternID, trip.timeseries]
+            dictID[trip.tripID] = [trip.journeyPatternID, trip.timeseries]
     with open('datasets/trips.csv', 'w') as outFile:
         dataWriter = csv.writer(outFile, delimiter=';')
         dataWriter.writerow(['TripID', 'JourneyPatternID', 'Trajectory'])
