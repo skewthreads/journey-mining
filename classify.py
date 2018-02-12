@@ -1,5 +1,6 @@
 import csv
 import ast
+import time
 import pandas as pd
 from sklearn import preprocessing
 from orderedset import OrderedSet
@@ -61,19 +62,43 @@ def gridify(filename, (min_lon, min_lat), cellSide): #cellSide in km
             else: #elif len(row) == 2
                 outputWriter.writerow([tripID, ';'.join([x for x in cellsList])])
 
-def classify(classifier):
-    df=pd.read_csv('datasets/tripsClean_grid.csv',sep='!')
+def cross_validate(classifier):
+    df=pd.read_csv('datasets/tripsClean_grid_v2.csv',sep='!')
     le = preprocessing.LabelEncoder()
     le.fit(df['JourneyPatternID'])
     Y_train=le.transform(df['JourneyPatternID'])
     X_train=df['Trajectory']
-    vectorizer = HashingVectorizer(ngram_range = (2,2), tokenizer=lambda x: x.split(';'))
+    vectorizer = HashingVectorizer(ngram_range=(1,2), tokenizer=lambda x: x.split(';'))
     pipeline = Pipeline([
         ('vect', vectorizer),
         ('classifier', classifier)
     ])
     scores = cross_val_score(pipeline, X_train, Y_train, cv=10)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+
+def classify(classifier):
+    df=pd.read_csv('datasets/tripsClean_grid.csv',sep='!')
+    le = preprocessing.LabelEncoder()
+    le.fit(df['JourneyPatternID'])
+    Y_train=le.transform(df['JourneyPatternID'])
+    X_train=df['Trajectory']
+    vectorizer = HashingVectorizer(ngram_range=(1,2), tokenizer=lambda x: x.split(';'))
+    pipeline = Pipeline([
+        ('vect', vectorizer),
+        ('classifier', classifier)
+    ])
+    pipeline.fit(X_train, Y_train)
+    df=pd.read_csv('datasets/test_set_grid.csv',sep='!')
+    X_test = df['Trajectory']
+    predicted_labels = le.inverse_transform(pipeline.predict(X_test))
+    with open('datasets/testSet_JourneyPatternIDs.csv', 'w') as outFile:
+        outputWriter = csv.writer(outFile, delimiter='\t')
+        outputWriter.writerow(['Test_Trip_ID', 'Predicted_JourneyPatternID'])
+        trip_id = 0
+        for label in predicted_labels:
+            outputWriter.writerow([trip_id, label])
+            trip_id += 1
+
 
 
 def regridify(filename):
@@ -113,12 +138,11 @@ def regridify(filename):
 
 # min_lon, min_lat = (-6.61505, 53.07045)
 min_lon, min_lat = find_min_border('datasets/tripsClean.csv')
-print 'min: ', (min_lon, min_lat)
-# gridify('datasets/tripsClean.csv',(min_lon, min_lat), float(sys.argv[1]))
-gridify('datasets/tripsClean.csv',(min_lon, min_lat), 0.3)
-gridify('datasets/test_set.csv',(min_lon, min_lat), 0.3)
+gridify('datasets/tripsClean.csv',(min_lon, min_lat), 0.2)
+gridify('datasets/test_set.csv',(min_lon, min_lat), 0.2)
+# regridify('datasets/tripsClean_grid.csv')
+# regridify('datasets/test_set_grid.csv')
 
-classify(classifier = KNeighborsClassifier())
+classify(classifier = KNeighborsClassifier(n_neighbors=1))
 # classify(classifier = LogisticRegression())
 # classify(classifier = RandomForestClassifier(n_estimators = 10, random_state = 1, n_jobs=-1))
-
